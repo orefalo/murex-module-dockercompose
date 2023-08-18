@@ -1,0 +1,37 @@
+if { which docker-compose } then {
+    private autocomplete.docker-compose.services {
+        open docker-compose.yaml -> [ services ] -> formap k v { out "$k" } -> cast str
+    }
+
+    private autocomplete.docker-compose.FlagValues {
+        # A helper function to generate autocomplete config for docker-compose
+        docker-compose: --help -> @[Commands:..]se -> [:0] -> foreach flag {
+            ("$flag": [{
+                "FlagsDesc": ${ docker-compose --help $flag -> tabulate --map --column-wraps --split-comma --key-inc-hint },
+                "AllowMultiple": true)
+        
+            if {
+                a build,create,events,exec,kill,logs,pause,pull,push,restart,run,scale,start,stop,top,unpause,up -> regexp m/^$flag$/
+            } then {
+                (,
+                "Dynamic": ({ autocomplete.docker-compose.services }))
+            }
+            out "\n}],"
+        }
+        out ("": [{}])
+    }
+
+    private autocomplete.docker-compose.FlagsDesc {
+        # Runs docker-compose to query it's command line flags
+        docker-compose --help -> tabulate: --map --column-wraps --split-comma --key-inc-hint
+    }
+
+
+    bg {
+        autocomplete set docker-compose "[{
+            \"FlagsDesc\": ${ autocomplete.docker-compose.FlagsDesc },
+            \"FlagValues\": { ${ autocomplete.docker-compose.FlagValues } },
+            \"ListView\": true
+        }]"
+    }
+}
