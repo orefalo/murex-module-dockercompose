@@ -16,3 +16,9 @@ murex-package install https://github.com/orefalo/murex-module-dockercompose.git
 ```shell
 murex-package update
 ```
+
+## Remove
+
+```shell
+murex-package remove murex-module-dockercompose
+```
